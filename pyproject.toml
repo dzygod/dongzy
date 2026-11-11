@@ -1,0 +1,136 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "uhpc-ml-app"
+version = "0.2.0"
+description = "UHPC-NC 修复界面粘结性能文献整合 + 机器学习预测与可解释性分析工具。"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Dong Ziye", email = "1098295985@qq.com" }]
+keywords = ["UHPC", "bond-strength", "SHAP", "machine-learning", "civil-engineering"]
+
+# 注意：版本下限按当前 .venv 验证过的组合锁定。要升级时请同步更新 requirements.txt，
+# 并至少跑一次 `pytest -q` + `ruff check` + `mypy src`。
+dependencies = [
+    "pandas>=2.0",
+    "numpy>=1.24",
+    "scikit-learn>=1.3",
+    "xgboost>=1.7",
+    "shap>=0.42",
+    "matplotlib>=3.7",
+    "requests>=2.28",
+    "streamlit>=1.28",
+    "pandera>=0.18",
+]
+
+[project.optional-dependencies]
+# 开发者工具：本地 & CI 一致
+dev = [
+    "pytest>=7.4",
+    "ruff>=0.3",
+    "mypy>=1.7",
+    "pandas-stubs",
+    "types-requests",
+    "pre-commit>=3.5",
+]
+# MLflow 作为可选实验跟踪插件，CI 不强制安装。
+mlflow = [
+    "mlflow>=2.8",
+]
+# PDF 抽取（PR#5）可选；pdfplumber 用于离线表格抽取，GROBID 侧只靠 requests。
+pdf = [
+    "pdfplumber>=0.10",
+]
+
+[project.scripts]
+uhpc-ml = "uhpc_ml_app.app:main"
+literature-ingest = "uhpc_ml_app.literature.cli:main"
+
+[project.urls]
+Repository = "https://github.com/simpledong81/dongzy"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["-ra", "--strict-markers"]
+filterwarnings = [
+    # sklearn 对 <2 样本的 R² 会发警告，论文级数据没问题但单测小数据会触发
+    "ignore::UserWarning:sklearn.metrics._regression",
+    "ignore::sklearn.exceptions.ConvergenceWarning",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "F",  # pyflakes
+    "W",  # pycodestyle warnings
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "UP", # pyupgrade
+    "N",  # pep8-naming
+    "C4", # flake8-comprehensions
+    "SIM", # flake8-simplify
+]
+ignore = [
+    # 宽松处理中文 docstring 行长
+    "E501",
+    # 允许模块级非顶部 import（matplotlib 需要在 use("Agg") 之后 import pyplot）
+    "E402",
+    # 允许测试里显式断言（pytest.raises 的 `match` 已覆盖）
+    "B007",
+    # 构造 `pd.DataFrame(...)` 时不强制用 `{}` 而不是 `dict()`
+    "C408",
+    # SIM 系列里过于强硬的几条
+    "SIM103",
+    "SIM108",
+    # sklearn 全体代码用 `X` / `y` 作为矩阵名，强行小写会和 sklearn 生态割裂
+    "N803",
+    "N806",
+    # zip(strict=) 是 3.10 才稳定的 API；项目目前支持 3.10+，等把最低版本提到 3.10 生效后再统一启用
+    "B905",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B", "N802", "SIM"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+warn_unused_ignores = false
+warn_redundant_casts = true
+follow_imports = "silent"
+strict_optional = false
+# 渐进式类型：先只打开轻量级开关，不打开 --strict，避免阻塞论文主线。
+check_untyped_defs = false
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+no_implicit_optional = true
+plugins = []
+
+[[tool.mypy.overrides]]
+module = ["shap", "shap.*", "xgboost", "xgboost.*", "streamlit", "streamlit.*", "matplotlib.*", "requests", "requests.*"]
+ignore_errors = true
+
+# literature_crawler 将在后续 PR 移除，等 CLI 完全切到 uhpc_ml_app.literature 后再删。
+[[tool.mypy.overrides]]
+module = ["uhpc_ml_app.literature_crawler"]
+ignore_errors = true
+
+# pdfplumber / grobid-client 是可选依赖；CI 默认不装，放过导入错误
+[[tool.mypy.overrides]]
+module = ["pdfplumber", "pdfplumber.*"]
+ignore_errors = true

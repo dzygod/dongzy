@@ -1,0 +1,53 @@
+# Python bytecode/cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+
+# Test and coverage artifacts
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Tool caches
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# OS/editor files
+.DS_Store
+.idea/
+.vscode/
+
+# Build/distribution artifacts
+build/
+dist/
+*.egg-info/
+
+# Secrets / local env
+.env
+.env.*
+!.env.example
+
+# Optional experiment tracking
+mlruns/
+
+# Runtime outputs and generated assets
+outputs/
+data/processed/
+data/raw/literature_real.csv
+data/raw/literature_real.manifest.json
+
+# Local-only academic drafts (code-only public release)
+dongzy_thesis_draft.md
+小论文*.md
+小论文*.docx
+*.docx
+
+# Agent / IDE internal skills (not part of the public codebase)
+.agents/

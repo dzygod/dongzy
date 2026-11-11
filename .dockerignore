@@ -1,0 +1,16 @@
+.venv
+.git
+.github
+.mypy_cache
+.pytest_cache
+.ruff_cache
+__pycache__
+*.pyc
+*.pyo
+outputs
+logs
+mlruns
+.pre-commit-config.yaml
+Dockerfile
+.dockerignore
+dongzy_review.md
