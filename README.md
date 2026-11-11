@@ -185,6 +185,14 @@ python scripts/reproduce_paper1.py
 > 通用 `uhpc-ml` CLI / Streamlit 面板中基于 `roughness_sa` 的"粗糙度推荐区间"模块为早期
 > 探索性功能，论文结论以本复现脚本为准。
 
+跨研究泛化验证（LOGO，Leave-One-Study-Out）由 [`scripts/paper1_group_validation_v4.py`](scripts/paper1_group_validation_v4.py) 复现：
+
+```bash
+python scripts/paper1_group_validation_v4.py --csv <path>/uhpc_nc_bond_literature_data_v6.csv
+```
+
+该脚本输出两个口径：主分析（全局 IQR 预筛，明确为"预先筛定记录上的条件性能"）与敏感性分析（IQR 纳入界限完全由训练研究确定，无数据泄漏），用于回答"模型能否跨研究泛化"。
+
 ## 11. License
 
 本仓库**仅开源代码与可复现流水线**，采用 [MIT License](./LICENSE)。
