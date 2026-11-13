@@ -169,11 +169,11 @@ uhpc-ml --input outputs/run-*/literature_clean.csv --output outputs/run-latest
 
 ## 10. 论文复现（小论文 1）
 
-论文核心结果（抗剪为主，pooled OOF R² ≈ 0.81）由 [`scripts/reproduce_paper1.py`](scripts/reproduce_paper1.py) 复现：
+论文核心结果使用经原文核查的 `uhpc_nc_bond_literature_data_v8.csv`。v8 将 Sun 等研究误填为粗糙度的 16 条破坏滑移量改为缺失，并将 Valikhani 等研究 25 条记录的试验龄期由 28 d 更正为原文的约 10 个月（建模换算为 300 d）。更正记录见 [`docs/paper1_v8_source_audit.md`](docs/paper1_v8_source_audit.md)。论文的 440 条样本筛选、随机划分与跨研究验证请运行 [`scripts/paper1_group_validation_v4.py`](scripts/paper1_group_validation_v4.py)：
 
 ```bash
 # 真实数据（需按 §5 整理，或向通讯作者合理请求，见 §11）
-python scripts/reproduce_paper1.py --csv <path>/uhpc_nc_bond_literature_data_v6.csv --out outputs/run-paper1
+python scripts/paper1_group_validation_v4.py --csv <path>/uhpc_nc_bond_literature_data_v8.csv --out outputs/run-paper1
 
 # 合成示例（仅验证脚本可运行，禁止用于论文结论）
 python scripts/reproduce_paper1.py
@@ -185,13 +185,13 @@ python scripts/reproduce_paper1.py
 > 通用 `uhpc-ml` CLI / Streamlit 面板中基于 `roughness_sa` 的"粗糙度推荐区间"模块为早期
 > 探索性功能，论文结论以本复现脚本为准。
 
-跨研究泛化验证（LOGO，Leave-One-Study-Out）由 [`scripts/paper1_group_validation_v4.py`](scripts/paper1_group_validation_v4.py) 复现：
+`scripts/reproduce_paper1.py` 保留为早期流程演示，采用不同的数据清洗口径；其输出不得作为当前稿件的论文指标。跨研究泛化验证（LOGO，Leave-One-Study-Out）运行方式：
 
 ```bash
-python scripts/paper1_group_validation_v4.py --csv <path>/uhpc_nc_bond_literature_data_v6.csv
+python scripts/paper1_group_validation_v4.py --csv <path>/uhpc_nc_bond_literature_data_v8.csv
 ```
 
-该脚本输出两个口径：主分析（全局 IQR 预筛，明确为"预先筛定记录上的条件性能"）与敏感性分析（IQR 纳入界限完全由训练研究确定，无数据泄漏），用于回答"模型能否跨研究泛化"。
+该脚本输出两个口径：主分析（全局 IQR 预筛，明确为"预先筛定记录上的条件性能"）与敏感性分析（IQR 纳入界限完全由训练研究确定）。当前 v8 的抗剪 XGBoost 随机五折 R² 为 0.815，LOGO 为 0.350；试件类型均值基线为 0.492。仓库不提供真实文献数据，须使用作者提供的同版 CSV 才能重算论文指标。
 
 ## 11. License
 

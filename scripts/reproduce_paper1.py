@@ -1,9 +1,10 @@
-"""小论文 1 复现脚本（抗剪为主）：XGBoost + 对照模型，5 折 × 30 重复 CV。
+"""小论文 1 早期流程演示：XGBoost + 对照模型，5 折 × 30 重复 CV。
 
-固化论文采用的建模口径，便于审稿复现：
+当前稿件的 440 条样本和所有报告指标请使用 paper1_group_validation_v4.py。
+本脚本使用较早的数据清洗口径，输出不能对应当前稿件：
 
-- 数据：``uhpc_nc_bond_literature_data_v6.csv``（500 行原始记录）→ 库内
-  ``load_and_clean_data`` 清洗后 410 行（抗剪 287 / 抗拉 123）。真实数据不含于本仓库，
+- 数据：500 行原始记录经库内 ``load_and_clean_data`` 清洗，样本数
+  与当前稿件的 440 条不同。真实数据不含于本仓库，
   需按 ``docs/data_protocol.md`` 自行整理，或向通讯作者合理请求（见 README §11）。
   仓库自带的 ``data/raw/literature_sample.csv`` 为合成示例，仅用于验证脚本可运行，
   **禁止将基于它的输出用于论文结论**。
@@ -13,14 +14,14 @@
   XGBoost 固定超参：max_depth=5, learning_rate=0.02, n_estimators=300,
   subsample=0.8, colsample_bytree=0.8。
 - 评估：5 折 CV × 30 次重复（random_state=42）。
-  - **主口径 pooled OOF R²**：把每重复内 5 折袋外(out-of-fold)预测拼成一条算一次 R²，
-    再对 30 次重复取均值 ± 标准差（论文表报此口径，抗剪 ≈0.81）。
+  - pooled OOF R²：把每重复内 5 折袋外(out-of-fold)预测拼成一条算一次 R²，
+    再对 30 次重复取均值 ± 标准差。
   - 逐折平均 R²（fold_mean_r2）：数值略低，属正常，二者都诚实。
   - RMSE / MAE：在"全部折+全部重复"拼接的 pooled OOF 预测上计算。
 
-跑法（真实数据）：:
+旧流程运行示例（真实数据）：:
 
-    python scripts/reproduce_paper1.py --csv <path>/uhpc_nc_bond_literature_data_v6.csv --out outputs/run-paper1
+    python scripts/reproduce_paper1.py --csv <path>/uhpc_nc_bond_literature_data_v8.csv --out outputs/run-paper1
 
 跑法（合成示例，仅验证流程）：:
 
@@ -295,7 +296,7 @@ if __name__ == "__main__":
     import argparse
 
     ap = argparse.ArgumentParser()
-    ap.add_argument("--csv", default=DATA_CSV, help="文献数据 CSV 路径（论文用 v6，仓库默认合成示例）")
+    ap.add_argument("--csv", default=DATA_CSV, help="文献数据 CSV 路径（旧流程演示；仓库默认合成示例）")
     ap.add_argument("--out", default=str(OUT_DIR), help="输出目录")
     args = ap.parse_args()
     DATA_CSV = args.csv
