@@ -1,10 +1,10 @@
 """小论文 1 早期流程演示：XGBoost + 对照模型，5 折 × 30 重复 CV。
 
-当前稿件的 440 条样本和所有报告指标请使用 paper1_group_validation_v4.py。
+当前稿件的 467 条主分析样本及 484 条扩展分析样本和报告指标请使用 paper1_group_validation_v4.py。
 本脚本使用较早的数据清洗口径，输出不能对应当前稿件：
 
 - 数据：500 行原始记录经库内 ``load_and_clean_data`` 清洗，样本数
-  与当前稿件的 440 条不同。真实数据不含于本仓库，
+  与当前稿件的筛选口径不同。真实数据不含于本仓库，
   需按 ``docs/data_protocol.md`` 自行整理，或向通讯作者合理请求（见 README §11）。
   仓库自带的 ``data/raw/literature_sample.csv`` 为合成示例，仅用于验证脚本可运行，
   **禁止将基于它的输出用于论文结论**。
@@ -21,7 +21,7 @@
 
 旧流程运行示例（真实数据）：:
 
-    python scripts/reproduce_paper1.py --csv <path>/uhpc_nc_bond_literature_data_v8.csv --out outputs/run-paper1
+    python scripts/reproduce_paper1.py --csv <path>/uhpc_nc_bond_literature_data_v9.csv --out outputs/run-legacy-demo
 
 跑法（合成示例，仅验证流程）：:
 

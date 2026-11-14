@@ -15,7 +15,7 @@
 其余沿用 v3：主分析不按龄期删行（龄期仅在物理界 [0.5,400]）；敏感性保留 v2 的龄期限制。
 
 跑法（真实数据，仓库不附带，需按 data_protocol 整理或向通讯作者请求）：
-    python scripts/paper1_group_validation_v4.py --csv <path>/uhpc_nc_bond_literature_data_v8.csv
+    python scripts/paper1_group_validation_v4.py --csv <path>/uhpc_nc_bond_literature_data_v9.csv
 """
 import argparse
 import json
@@ -296,7 +296,7 @@ def main():
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description="小论文1 跨研究验证 v4（修正 IQR 数据泄漏）")
-    ap.add_argument("--csv", required=True, help="真实文献数据 CSV（论文当前使用 v8）")
+    ap.add_argument("--csv", required=True, help="真实文献数据 CSV（主分析 v9；扩展分析 v10_core）")
     ap.add_argument("--out", default=str(OUT_DIR_DEFAULT), help="输出目录")
     args = ap.parse_args()
     DATA_CSV = args.csv

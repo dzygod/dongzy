@@ -1,6 +1,6 @@
 # Paper 1 source audit and analysis version
 
-The manuscript's reported results use `uhpc_nc_bond_literature_data_v8.csv`,
+This is a historical v8 audit. The current Structures manuscript uses v9 for the primary analysis and v10_core for the extension; see [paper1_current_reproduction.md](paper1_current_reproduction.md). The v8 manuscript version used `uhpc_nc_bond_literature_data_v8.csv`,
 derived from the author's v7 literature table. The integrated table is
 available from the corresponding author on reasonable request; the repository's
 `literature_sample.csv` is synthetic and cannot reproduce manuscript results.

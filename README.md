@@ -169,17 +169,18 @@ uhpc-ml --input outputs/run-*/literature_clean.csv --output outputs/run-latest
 
 ## 10. 论文复现（小论文 1）
 
-论文核心结果使用经原文核查的 `uhpc_nc_bond_literature_data_v8.csv`。v8 将 Sun 等研究误填为粗糙度的 16 条破坏滑移量改为缺失，并将 Valikhani 等研究 25 条记录的试验龄期由 28 d 更正为原文的约 10 个月（建模换算为 300 d）。更正记录见 [`docs/paper1_v8_source_audit.md`](docs/paper1_v8_source_audit.md)。论文的 440 条样本筛选、随机划分与跨研究验证请运行 [`scripts/paper1_group_validation_v4.py`](scripts/paper1_group_validation_v4.py)：
+当前 Structures 稿件的主分析使用经原文核查的 `uhpc_nc_bond_literature_data_v9.csv`：527 条原始记录筛至 467 条（抗剪 286、抗拉 181；15 项研究）。扩展分析使用 `uhpc_nc_bond_literature_data_v10_core.csv`：549 条原始记录筛至 484 条（抗剪 296、抗拉 188；18 项研究）。v8 的历史勘误仍见 [`docs/paper1_v8_source_audit.md`](docs/paper1_v8_source_audit.md)；当前版本和复现边界见 [`docs/paper1_current_reproduction.md`](docs/paper1_current_reproduction.md)。运行论文使用的验证脚本：
 
 ```bash
 # 真实数据（需按 §5 整理，或向通讯作者合理请求，见 §11）
-python scripts/paper1_group_validation_v4.py --csv <path>/uhpc_nc_bond_literature_data_v8.csv --out outputs/run-paper1
+python scripts/paper1_group_validation_v4.py --csv <path>/uhpc_nc_bond_literature_data_v9.csv --out outputs/run-paper1-v9
+python scripts/paper1_group_validation_v4.py --csv <path>/uhpc_nc_bond_literature_data_v10_core.csv --out outputs/run-paper1-v10-core
 
 # 合成示例（仅验证脚本可运行，禁止用于论文结论）
 python scripts/reproduce_paper1.py
 ```
 
-脚本固定 XGBoost 超参（max_depth=5 / lr=0.02 / n_estimators=300 / subsample=0.8 / colsample_bytree=0.8）、5 折 × 30 次重复 CV、pooled OOF R² 口径，与论文一致；输出 `metrics_table.csv` / `metrics_summary.json` / 散点 / SHAP / 特征重要性图。
+验证脚本固定 XGBoost 超参（max_depth=5 / lr=0.02 / n_estimators=300 / subsample=0.8 / colsample_bytree=0.8）、5 折 × 30 次重复 CV、pooled OOF R² 口径，与论文一致；每次运行输出一个 `report.json`，包含随机五折、LOGO 和敏感性分析结果。论文配图还需要相应绘图流程，不能由该验证脚本单独生成。
 
 > 论文建模特征为 `interface_prep` + `specimen_type` 的 one-hot 与 `roughness_mm` 稀疏特征。
 > 通用 `uhpc-ml` CLI / Streamlit 面板中基于 `roughness_sa` 的"粗糙度推荐区间"模块为早期
@@ -188,10 +189,10 @@ python scripts/reproduce_paper1.py
 `scripts/reproduce_paper1.py` 保留为早期流程演示，采用不同的数据清洗口径；其输出不得作为当前稿件的论文指标。跨研究泛化验证（LOGO，Leave-One-Study-Out）运行方式：
 
 ```bash
-python scripts/paper1_group_validation_v4.py --csv <path>/uhpc_nc_bond_literature_data_v8.csv
+python scripts/paper1_group_validation_v4.py --csv <path>/uhpc_nc_bond_literature_data_v9.csv --out outputs/run-paper1-v9
 ```
 
-该脚本输出两个口径：主分析（全局 IQR 预筛，明确为"预先筛定记录上的条件性能"）与敏感性分析（IQR 纳入界限完全由训练研究确定）。当前 v8 的抗剪 XGBoost 随机五折 R² 为 0.815，LOGO 为 0.350；试件类型均值基线为 0.492。仓库不提供真实文献数据，须使用作者提供的同版 CSV 才能重算论文指标。
+该脚本输出两个口径：主分析（全局 IQR 预筛，明确为"预先筛定记录上的条件性能"）与敏感性分析（IQR 纳入界限完全由训练研究确定）。当前 v9 主分析的抗剪 XGBoost 随机五折 R² 为 0.834，LOGO 为 0.431；试件类型均值基线为 0.549。扩展数据 v10_core 的相应值为 0.841、0.453 和 0.563。仓库不提供真实文献数据；合成示例不能重算稿件指标，须使用作者提供的相同版本 CSV。
 
 ## 11. License
 
